@@ -22,7 +22,16 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('mtb_token');
     setUser(null);
   };
-  return <AuthContext.Provider value={{ user, loading, acceptAuth, logout }}>{children}</AuthContext.Provider>;
+  const refreshUser = async () => {
+    try {
+      const { data } = await api.get('/auth/me');
+      setUser(data.user);
+      return data.user;
+    } catch {
+      return null;
+    }
+  };
+  return <AuthContext.Provider value={{ user, loading, acceptAuth, logout, refreshUser }}>{children}</AuthContext.Provider>;
 }
 export function useAuth() {
   const value = useContext(AuthContext);

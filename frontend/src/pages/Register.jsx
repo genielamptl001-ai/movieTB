@@ -18,7 +18,7 @@ export default function Register() {
     finally { setBusy(false); }
   }
   return <main className="container-shell flex min-h-[70vh] items-center justify-center py-12"><form onSubmit={submit} className="w-full max-w-md rounded-2xl border border-white/10 bg-panel p-8">
-    <p className="text-sm font-bold uppercase tracking-widest text-accent">Join ScreenTime</p><h1 className="mt-2 text-3xl font-black">Create account</h1>
+    <p className="text-sm font-bold uppercase tracking-widest text-accent">Join BOOKMYCINEMA</p><h1 className="mt-2 text-3xl font-black font-display">Create account</h1>
     {error && <p className="mt-5 rounded-lg bg-red-950 p-3 text-sm text-red-200">{error}</p>}
     <label className="mt-6 block text-sm text-slate-300">Full name<input required maxLength="80" value={form.name} onChange={e => setForm({...form,name:e.target.value})} className="field mt-2" /></label>
     <label className="mt-4 block text-sm text-slate-300">Email<input required type="email" autoComplete="email" value={form.email} onChange={e => setForm({...form,email:e.target.value})} className="field mt-2" /></label>

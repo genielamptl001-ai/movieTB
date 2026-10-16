@@ -53,3 +53,50 @@ export const getMyBookings = asyncHandler(async (req, res) => {
   }));
   res.json({ bookings });
 });
+
+export const cancelBooking = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  // 1. Verify booking exists and belongs to user
+  const { data: booking, error: findError } = await supabase
+    .from('bookings')
+    .select('*, shows(starts_at)')
+    .eq('id', id)
+    .eq('user_id', req.user.id)
+    .maybeSingle();
+
+  if (findError) throw findError;
+  if (!booking) {
+    return res.status(404).json({ message: 'Booking not found.' });
+  }
+
+  if (booking.status === 'cancelled') {
+    return res.status(400).json({ message: 'This booking is already cancelled.' });
+  }
+
+  // Check if show has passed
+  if (booking.shows && new Date(booking.shows.starts_at) <= new Date()) {
+    return res.status(400).json({ message: 'Cannot cancel a booking for a show that has already started.' });
+  }
+
+  // 2. Mark as cancelled
+  const { data: updated, error: updateError } = await supabase
+    .from('bookings')
+    .update({ status: 'cancelled' })
+    .eq('id', id)
+    .eq('user_id', req.user.id)
+    .select('*')
+    .single();
+
+  if (updateError) throw updateError;
+
+  res.json({
+    message: 'Booking cancelled successfully. Your seats have been released.',
+    booking: {
+      _id: updated.id,
+      seats: updated.seats,
+      totalAmount: Number(updated.total_amount),
+      status: updated.status
+    }
+  });
+});

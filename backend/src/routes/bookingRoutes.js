@@ -1,8 +1,13 @@
 import { Router } from 'express';
-import { createBooking, getMyBookings } from '../controllers/bookingController.js';
+import { createBooking, getMyBookings, cancelBooking } from '../controllers/bookingController.js';
 import { protect } from '../middleware/auth.js';
+
 const router = Router();
 router.use(protect);
+
 router.get('/my', getMyBookings);
 router.post('/', createBooking);
+router.patch('/:id/cancel', cancelBooking);
+router.post('/:id/cancel', cancelBooking);
+
 export default router;
